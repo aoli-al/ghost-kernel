@@ -213,6 +213,11 @@ static inline gtid_t gtid_of(struct task_struct *p)
 	return p->gtid;
 }
 
+static inline long state_of(struct task_struct *p)
+{
+	return p->state;
+}
+
 /* enclave::is_dying */
 #define ENCLAVE_IS_DYING	(1U << 0)
 #define ENCLAVE_IS_REAPABLE	(1U << 1)
@@ -4547,6 +4552,7 @@ static void task_deliver_msg_blocked(struct rq *rq, struct task_struct *p)
 	payload->gtid = gtid_of(p);
 	payload->runtime = p->se.sum_exec_runtime;
 	payload->cpu = cpu_of(rq);
+	payload->state = state_of(p);
 	payload->cpu_seqnum = ++rq->ghost.cpu_seqnum;
 	payload->from_switchto = ghost_in_switchto(rq);
 

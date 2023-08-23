@@ -319,6 +319,7 @@ struct ghost_msg_payload_task_yield {
 	uint64_t runtime;	/* cumulative runtime in ns */
 	uint64_t cpu_seqnum;
 	uint64_t agent_data;	/* used by bpf */
+	int64_t state;
 	int cpu;
 	char from_switchto;
 };
