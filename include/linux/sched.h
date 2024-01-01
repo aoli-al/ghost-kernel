@@ -599,7 +599,6 @@ struct sched_ghost_entity {
 	struct ghost_enclave *enclave;
 	/* See ghost_destroy_enclave() */
 	int __agent_free_cpu_cmd;
-	int dequeue_flag;
 
 	/*
 	 * See also ghost_prepare_task_switch() and ghost_deferred_msgs()

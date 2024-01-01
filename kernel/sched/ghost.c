@@ -967,7 +967,6 @@ static void _dequeue_task_ghost(struct rq *rq, struct task_struct *p, int flags)
 		} else {
 			WARN_ON_ONCE(p->ghost.blocked_task);
 			p->ghost.blocked_task = true;
-			p->ghost.dequeue_flag = flags;
 
 			/*
 			 * Return to local agent if it has expressed interest in
@@ -1008,7 +1007,7 @@ _enqueue_task_ghost(struct rq *rq, struct task_struct *p, int flags)
 }
 
 static void _set_next_task_ghost(struct rq *rq, struct task_struct *p,
-				 bool first)
+				bool first)
 {
 	WARN_ON_ONCE(first);
 
@@ -4553,7 +4552,7 @@ static void task_deliver_msg_blocked(struct rq *rq, struct task_struct *p)
 	payload->gtid = gtid_of(p);
 	payload->runtime = p->se.sum_exec_runtime;
 	payload->cpu = cpu_of(rq);
-	payload->state = p->ghost.dequeue_flag;
+	payload->state = state_of(p);
 	payload->cpu_seqnum = ++rq->ghost.cpu_seqnum;
 	payload->from_switchto = ghost_in_switchto(rq);
 
