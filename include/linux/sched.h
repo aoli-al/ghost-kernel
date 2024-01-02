@@ -96,7 +96,8 @@ struct io_uring_task;
 #define TASK_NOLOAD			0x0400
 #define TASK_NEW			0x0800
 #define __TASK_DEFERRABLE_WAKEUP	0x1000
-#define TASK_STATE_MAX			0x2000
+#define TASK_STATE_LOCKED		0x2000
+#define TASK_STATE_MAX			0x4000
 
 /* Convenience macros for the sake of set_current_state: */
 #define TASK_KILLABLE			(TASK_WAKEKILL | TASK_UNINTERRUPTIBLE)

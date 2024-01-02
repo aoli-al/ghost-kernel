@@ -1002,7 +1002,7 @@ __mutex_lock_common(struct mutex *lock, long state, unsigned int subclass,
 
 	waiter.task = current;
 
-	set_current_state(state);
+	set_current_state(state | TASK_STATE_LOCKED);
 	for (;;) {
 		/*
 		 * Once we hold wait_lock, we're serialized against
@@ -1042,7 +1042,7 @@ __mutex_lock_common(struct mutex *lock, long state, unsigned int subclass,
 				__mutex_set_flag(lock, MUTEX_FLAG_HANDOFF);
 		}
 
-		set_current_state(state);
+		set_current_state(state | TASK_STATE_LOCKED);
 		/*
 		 * Here we order against unlock; we must either see it change
 		 * state back to RUNNING and fall through the next schedule(),
