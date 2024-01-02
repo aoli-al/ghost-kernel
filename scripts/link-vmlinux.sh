@@ -151,11 +151,17 @@ gen_btf()
 		echo >&2 "BTF: ${1}: pahole version $(${PAHOLE} --version) is too old, need at least v1.16"
 		return 1
 	fi
+  if [ "${pahole_ver}" -ge "122" ]; then
+    extra_paholeopt="${extra_paholeopt} -j"
+  fi
+  if [ "${pahole_ver}" -ge "124" ]; then
+    extra_paholeopt="${extra_paholeopt} --skip_encoding_btf_enum64"
+  fi
 
 	vmlinux_link ${1}
 
 	info "BTF" ${2}
-	LLVM_OBJCOPY=${OBJCOPY} ${PAHOLE} -J ${1}
+	LLVM_OBJCOPY=${OBJCOPY} ${PAHOLE} -J  ${extra_paholeopt} ${1}
 
 	# Create ${2} which contains just .BTF section but no symbols. Add
 	# SHF_ALLOC because .BTF will be part of the vmlinux image. --strip-all
