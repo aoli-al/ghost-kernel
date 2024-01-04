@@ -11,6 +11,7 @@
  *
  *  See Documentation/locking/rt-mutex-design.rst for details.
  */
+#include "linux/sched.h"
 #include <linux/spinlock.h>
 #include <linux/export.h>
 #include <linux/sched/signal.h>
@@ -1194,7 +1195,7 @@ __rt_mutex_slowlock(struct rt_mutex *lock, int state,
 		schedule();
 
 		raw_spin_lock_irq(&lock->wait_lock);
-		set_current_state(state);
+		set_current_state(state | TASK_STATE_LOCKED);
 	}
 
 	__set_current_state(TASK_RUNNING);
@@ -1216,7 +1217,7 @@ static void rt_mutex_handle_deadlock(int res, int detect_deadlock,
 	 */
 	rt_mutex_print_deadlock(w);
 	while (1) {
-		set_current_state(TASK_INTERRUPTIBLE);
+		set_current_state(TASK_INTERRUPTIBLE | TASK_STATE_LOCKED);
 		schedule();
 	}
 }
@@ -1251,7 +1252,7 @@ rt_mutex_slowlock(struct rt_mutex *lock, int state,
 		return 0;
 	}
 
-	set_current_state(state);
+	set_current_state(state | TASK_STATE_LOCKED);
 
 	/* Setup the timer, when timeout != NULL */
 	if (unlikely(timeout))
@@ -1850,7 +1851,7 @@ int rt_mutex_wait_proxy_lock(struct rt_mutex *lock,
 
 	raw_spin_lock_irq(&lock->wait_lock);
 	/* sleep on the mutex */
-	set_current_state(TASK_INTERRUPTIBLE);
+	set_current_state(TASK_INTERRUPTIBLE | TASK_STATE_LOCKED);
 	ret = __rt_mutex_slowlock(lock, TASK_INTERRUPTIBLE, to, waiter);
 	/*
 	 * try_to_take_rt_mutex() sets the waiter bit unconditionally. We might

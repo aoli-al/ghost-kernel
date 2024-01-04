@@ -154,7 +154,7 @@ static void percpu_rwsem_wait(struct percpu_rw_semaphore *sem, bool reader)
 	spin_unlock_irq(&sem->waiters.lock);
 
 	while (wait) {
-		set_current_state(TASK_UNINTERRUPTIBLE);
+		set_current_state(TASK_UNINTERRUPTIBLE | TASK_STATE_LOCKED);
 		if (!smp_load_acquire(&wq_entry.private))
 			break;
 		schedule();

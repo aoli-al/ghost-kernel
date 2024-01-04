@@ -976,7 +976,7 @@ queue:
 
 	/* wait to be given the lock */
 	for (;;) {
-		set_current_state(state);
+		set_current_state(state | TASK_STATE_LOCKED);
 		if (!smp_load_acquire(&waiter.task)) {
 			/* Matches rwsem_mark_wake()'s smp_store_release(). */
 			break;
@@ -1077,7 +1077,7 @@ rwsem_down_write_slowpath(struct rw_semaphore *sem, int state)
 
 wait:
 	/* wait until we successfully acquire the lock */
-	set_current_state(state);
+	set_current_state(state | TASK_STATE_LOCKED);
 	for (;;) {
 		if (rwsem_try_write_lock(sem, wstate)) {
 			/* rwsem_try_write_lock() implies ACQUIRE on success */
@@ -1105,7 +1105,7 @@ wait:
 
 			schedule();
 			lockevent_inc(rwsem_sleep_writer);
-			set_current_state(state);
+			set_current_state(state | TASK_STATE_LOCKED);
 			/*
 			 * If HANDOFF bit is set, unconditionally do
 			 * a trylock.

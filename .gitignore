@@ -156,3 +156,4 @@ x509.genkey
 # Documentation toolchain
 sphinx_*/
 kheaders_data.tar.xz.tmp/
+compiled_modules/
